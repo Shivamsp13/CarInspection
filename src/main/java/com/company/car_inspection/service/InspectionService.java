@@ -118,15 +118,21 @@ public class InspectionService {
 
     public void deleteInspection(Long id) {
 
-        Inspection inspection =
-                inspectionRepository.findById(id)
-                        .orElseThrow(() ->
-                                new ResourceNotFoundException(
-                                        "Inspection not found with id: " + id
-                                ));
+        Inspection inspection = inspectionRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Inspection not found with id: " + id
+                        ));
+
+        if (inspection.getPhotoS3Key() != null &&
+                !inspection.getPhotoS3Key().isBlank()) {
+
+            s3Service.deleteFile(inspection.getPhotoS3Key());
+        }
 
         inspectionRepository.delete(inspection);
     }
+
     public InspectionResponse submitInspection(Long id) {
 
         Inspection inspection = inspectionRepository.findById(id)
