@@ -2,12 +2,15 @@ package com.company.car_inspection.controller;
 
 import com.company.car_inspection.dto.InspectionRequest;
 import com.company.car_inspection.dto.InspectionResponse;
-import com.company.car_inspection.dto.PhotoUploadRequest;
 import com.company.car_inspection.service.InspectionService;
 import com.company.car_inspection.service.VehicleService;
 import jakarta.validation.Valid;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -74,14 +77,27 @@ public class InspectionController {
         return inspectionService.submitInspection(id);
     }
 
-    @PostMapping("/{id}/photo")
+    @PostMapping(
+            value = "/{id}/photo",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+    )
     public InspectionResponse uploadPhoto(
             @PathVariable Long id,
-            @RequestBody PhotoUploadRequest request) {
+            @RequestParam("file") MultipartFile file)
+            throws IOException {
 
-        return inspectionService.uploadPhoto(
-                id,
-                request.getPhotoS3Key()
-        );
+        return inspectionService.uploadPhoto(id, file);
+    }
+
+    @GetMapping("/{id}/photo")
+    public ResponseEntity<byte[]> getInspectionPhoto(
+            @PathVariable Long id)
+            throws IOException {
+
+        byte[] photo = inspectionService.getInspectionPhoto(id);
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.IMAGE_JPEG)
+                .body(photo);
     }
 }

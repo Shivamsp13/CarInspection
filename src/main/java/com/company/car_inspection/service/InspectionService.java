@@ -7,8 +7,11 @@ import com.company.car_inspection.entity.Vehicle;
 import com.company.car_inspection.exception.ResourceNotFoundException;
 import com.company.car_inspection.repository.InspectionRepository;
 import com.company.car_inspection.repository.VehicleRepository;
+import com.company.car_inspection.util.S3Service;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -16,13 +19,16 @@ public class InspectionService {
 
     private final InspectionRepository inspectionRepository;
     private final VehicleRepository vehicleRepository;
+    private final S3Service s3Service;
 
     public InspectionService(
             InspectionRepository inspectionRepository,
-            VehicleRepository vehicleRepository) {
+            VehicleRepository vehicleRepository,
+            S3Service s3Service) {
 
         this.inspectionRepository = inspectionRepository;
         this.vehicleRepository = vehicleRepository;
+        this.s3Service=s3Service;
     }
 
     public List<InspectionResponse> getAllInspections() {
@@ -138,19 +144,19 @@ public class InspectionService {
     }
 
     public InspectionResponse uploadPhoto(
-            Long id,
-            String photoS3Key) {
+            Long inspectionId,
+            MultipartFile file) throws IOException {
 
-        Inspection inspection = inspectionRepository.findById(id)
+        Inspection inspection = inspectionRepository.findById(inspectionId)
                 .orElseThrow(() ->
                         new ResourceNotFoundException(
-                                "Inspection not found with id: " + id
-                        ));
+                                "Inspection not found with id: " + inspectionId));
 
-        inspection.setPhotoS3Key(photoS3Key);
+        String photoKey = s3Service.uploadFile(file);
 
-        Inspection savedInspection =
-                inspectionRepository.save(inspection);
+        inspection.setPhotoS3Key(photoKey);
+
+        Inspection savedInspection = inspectionRepository.save(inspection);
 
         return mapToResponse(savedInspection);
     }
@@ -182,5 +188,22 @@ public class InspectionService {
                 inspection.getUpdatedAt());
 
         return response;
+    }
+
+    public byte[] getInspectionPhoto(Long inspectionId) throws IOException {
+
+        Inspection inspection = inspectionRepository.findById(inspectionId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Inspection not found with id: " + inspectionId
+                        ));
+
+        if (inspection.getPhotoS3Key() == null) {
+            throw new ResourceNotFoundException(
+                    "No photo found for inspection id: " + inspectionId
+            );
+        }
+
+        return s3Service.downloadFile(inspection.getPhotoS3Key());
     }
 }
