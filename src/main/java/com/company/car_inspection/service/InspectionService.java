@@ -76,7 +76,7 @@ public class InspectionService {
         inspection.setInspectionDate(request.getInspectionDate());
         inspection.setOverallCondition(request.getOverallCondition());
         inspection.setNotes(request.getNotes());
-        inspection.setStatus(request.getStatus());
+        inspection.setStatus("DRAFT");
 
         Inspection savedInspection =
                 inspectionRepository.save(inspection);
