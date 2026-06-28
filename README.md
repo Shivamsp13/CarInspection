@@ -123,13 +123,14 @@ Amazon S3
 
 ## Vehicle APIs
 
-| Method | Endpoint           |
-| ------ | ------------------ |
-| GET    | /api/vehicles      |
-| GET    | /api/vehicles/{id} |
-| POST   | /api/vehicles      |
-| PUT    | /api/vehicles/{id} |
-| DELETE | /api/vehicles/{id} |
+| Method | Endpoint             |
+| ------ | -------------------- |
+| GET    | /api/vehicles        |
+| GET    | /api/vehicles/{id}   |
+| POST   | /api/vehicles        |
+| PUT    | /api/vehicles/{id}   |
+| DELETE | /api/vehicles/{id}   |
+| GET    | /api/vehicles/search |
 
 ## Inspection APIs
 
