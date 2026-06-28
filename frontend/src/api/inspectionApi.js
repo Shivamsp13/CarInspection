@@ -27,6 +27,9 @@ export const submitInspection = (id) =>
 export const getVehicleInspections = (vehicleId) =>
     api.get(`/inspections/${vehicleId}/inspections`);
 
+export const deleteInspectionPhoto = (id) => {
+    return api.delete(`/inspections/${id}/photo`);
+};
 export const uploadInspectionPhoto = (id, file) => {
 
     const formData = new FormData();

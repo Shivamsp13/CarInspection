@@ -6,6 +6,8 @@ import InspectionForm from "../components/InspectionForm";
 import {
     getInspectionById,
     updateInspection,
+    uploadInspectionPhoto,
+    deleteInspectionPhoto
 } from "../api/inspectionApi";
 
 function EditInspectionPage() {
@@ -17,6 +19,23 @@ function EditInspectionPage() {
     const [inspection, setInspection] = useState(null);
 
     const [loading, setLoading] = useState(true);
+    const handleDeletePhoto = () => {
+
+        deleteInspectionPhoto(id)
+            .then((response) => {
+
+                setInspection(response.data);
+
+                alert("Photo deleted successfully.");
+
+            })
+            .catch(() => {
+
+                alert("Failed to delete photo.");
+
+            });
+
+    };
 
     useEffect(() => {
 
@@ -48,6 +67,21 @@ function EditInspectionPage() {
 
             .then(() => {
 
+                if (updatedInspection.photo) {
+
+                    return uploadInspectionPhoto(
+                        id,
+                        updatedInspection.photo
+                    );
+
+                }
+
+                return Promise.resolve();
+
+            })
+
+            .then(() => {
+
                 navigate("/inspections");
 
             })
@@ -73,6 +107,7 @@ function EditInspectionPage() {
             <InspectionForm
                 initialData={inspection}
                 onSubmit={handleUpdateInspection}
+                onDeletePhoto={handleDeletePhoto}
             />
 
         </div>

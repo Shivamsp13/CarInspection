@@ -108,7 +108,9 @@ public class InspectionService {
         inspection.setInspectionDate(request.getInspectionDate());
         inspection.setOverallCondition(request.getOverallCondition());
         inspection.setNotes(request.getNotes());
-        inspection.setStatus(request.getStatus());
+//        if (request.getStatus() != null) {
+//            inspection.setStatus(request.getStatus());
+//        }
 
         Inspection updatedInspection =
                 inspectionRepository.save(inspection);
@@ -211,5 +213,25 @@ public class InspectionService {
         }
 
         return s3Service.downloadFile(inspection.getPhotoS3Key());
+    }
+
+    public InspectionResponse deletePhoto(Long id)
+            throws IOException {
+
+        Inspection inspection = inspectionRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Inspection not found with id: " + id));
+
+        if (inspection.getPhotoS3Key() != null) {
+
+            s3Service.deleteFile(inspection.getPhotoS3Key());
+
+            inspection.setPhotoS3Key(null);
+
+            inspectionRepository.save(inspection);
+        }
+
+        return mapToResponse(inspection);
     }
 }

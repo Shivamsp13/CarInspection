@@ -54,7 +54,6 @@ public class S3Service {
     }
 
     private String generateFileKey(String originalFilename) {
-
         return UUID.randomUUID() + "_" + originalFilename;
     }
 

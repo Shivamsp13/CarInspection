@@ -16,7 +16,11 @@ import {
 
 import { getAllVehicles } from "../api/vehicleApi";
 
-function InspectionForm({ onSubmit, initialData }) {
+function InspectionForm({
+                            onSubmit,
+                            initialData,
+                            onDeletePhoto,
+                        }) {
 
     const [vehicles, setVehicles] = useState([]);
 
@@ -301,11 +305,33 @@ function InspectionForm({ onSubmit, initialData }) {
 
                         {photo && (
 
-                            <Typography
-                                variant="body2"
-                            >
+                            <Typography variant="body2">
                                 Selected File: {photo.name}
                             </Typography>
+
+                        )}
+
+                        {!photo && initialData?.photoS3Key && (
+
+                            <Stack
+                                direction="row"
+                                spacing={2}
+                                alignItems="center"
+                            >
+
+                                <Typography variant="body2">
+                                    Photo already uploaded
+                                </Typography>
+
+                                <Button
+                                    variant="outlined"
+                                    color="error"
+                                    onClick={onDeletePhoto}
+                                >
+                                    Delete Photo
+                                </Button>
+
+                            </Stack>
 
                         )}
 

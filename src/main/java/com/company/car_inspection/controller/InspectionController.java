@@ -100,4 +100,11 @@ public class InspectionController {
                 .contentType(MediaType.IMAGE_JPEG)
                 .body(photo);
     }
+    @DeleteMapping("/{id}/photo")
+    public InspectionResponse deletePhoto(
+            @PathVariable Long id)
+            throws IOException {
+
+        return inspectionService.deletePhoto(id);
+    }
 }
