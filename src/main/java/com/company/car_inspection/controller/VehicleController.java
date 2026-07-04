@@ -47,8 +47,8 @@ public class VehicleController {
     public String deleteVehicle(@PathVariable Long id) {
 
         vehicleService.deleteVehicle(id);
-
         return "Vehicle deleted successfully";
+
     }
 
     @GetMapping("/search")
